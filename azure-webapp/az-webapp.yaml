@@ -1,0 +1,56 @@
+name: Azure-Simple-RG-Test
+version: v1
+inputs:
+  platform:
+    type: string
+    title: Select Platform
+    default: 'platform:azure'
+    oneOf:
+      - title: Microsoft Azure
+        const: 'platform:azure'
+resources:
+  ResourceGroup_1:
+    type: Cloud.Azure.ResourceGroup
+    metadata:
+      layoutPosition:
+        - 0
+        - 0
+    constraints:
+      - tag: '${input.platform}'
+    properties:
+      name: krudisar0067
+      useExisting: false
+  App_Service_Plan_1:
+    type: Cloud.Service.Azure.App.Service.Plan
+    metadata:
+      layoutPosition:
+        - 0
+        - 1
+    properties:
+      sku:
+        - capacity: 1
+          size: F1
+          tier: F
+      name: appplan
+      region: westus
+      account: Azure KR
+      resource_group_name: '${resource.ResourceGroup_1.resourceName}'
+  App_Service_1:
+    type: Cloud.Service.Azure.App.Service
+    metadata:
+      layoutPosition:
+        - 0
+        - 2
+    properties:
+      name: appservice-kr-01
+      region: westus
+      account: Azure KR
+      connection_string:
+        - name: AzureDatabase
+          type: SQLAzure
+          value: Server=some-server.mydomain.com;Integrated Security=SSPI
+      #      site_config:
+      #        - scm_type: LocalGit
+      #          dotnet_framework_version: v4.0
+      app_service_plan_id: '${resource.App_Service_Plan_1.id}'
+      resource_group_name: '${resource.ResourceGroup_1.resourceName}'
