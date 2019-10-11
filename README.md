@@ -1,2 +1,2 @@
 # vra-blueprints
-Blueprints for Vmware vRealize Automation 8 (Cloud)
+Blueprints for VMware vRealize Automation 8 (Cloud)
