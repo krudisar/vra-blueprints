@@ -1,0 +1,65 @@
+name: Single MS Azure SQL database
+version: 1.0.0
+formatVersion: 1
+inputs:
+  resourceGroup:
+    type: string
+    title: Azure Resource Group Name
+    default: rg-kr
+  sqlServerName:
+    type: string
+    title: SQL Server Name
+    default: srv-kr
+  sqlDatabaseName:
+    type: string
+    title: SQL Database Name
+    default: db-kr
+  sqlAdminName:
+    type: string
+    title: Admin User Name
+    default: admin-kr
+  sqlAdminPassword:
+    type: string
+    title: Admin Password
+    default: VMware1!
+    encrypted: true
+resources:
+  Azure_ResourceGroup:
+    type: Cloud.Azure.ResourceGroup
+    metadata:
+      layoutPosition:
+        - 0
+        - 0
+    properties:
+      name: '${input.resourceGroup}'
+      useExisting: false
+  Azure_SQL_Server:
+    type: Cloud.Service.Azure.SQL.Server
+    dependsOn:
+      - Azure_ResourceGroup
+    metadata:
+      layoutPosition:
+        - 0
+        - 1
+    properties:
+      name: '${input.sqlServerName}'
+      region: West Europe
+      account: Azure KR
+      version: '12.0'
+      administrator_login: '${input.sqlAdminName}'
+      resource_group_name: '${resource.Azure_ResourceGroup.resourceName}'
+      administrator_login_password: '${input.sqlAdminPassword}'
+  Azure_SQL_Database:
+    type: Cloud.Service.Azure.SQL.Database
+    dependsOn:
+      - Azure_SQL_Server
+    metadata:
+      layoutPosition:
+        - 0
+        - 2
+    properties:
+      name: '${input.sqlDatabaseName}'
+      region: West Europe
+      account: Azure KR
+      server_name: '${resource.Azure_SQL_Server.name}'
+      resource_group_name: '${resource.Azure_ResourceGroup.resourceName}'
